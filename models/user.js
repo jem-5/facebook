@@ -10,6 +10,7 @@ const UserSchema = new Schema({
   photoPath: { type: String, required: false },
   friends: [{ type: Schema.ObjectId, ref: "User", required: false }],
   friendRequests: [{ type: Schema.ObjectId, ref: "User", required: false }],
+  savedPosts: [{ type: Schema.ObjectId, ref: "Post", required: false }],
 });
 
 module.exports = mongoose.model("User", UserSchema);

@@ -20,11 +20,11 @@ router.put("/posts/:postId", postController.update_post);
 
 router.delete("/posts/:postId", postController.delete_post);
 
-router.post(
-  "/posts/:postId/reactions",
+router.post("/posts/:postId/reactions", postController.create_post_reaction);
 
-  postController.create_post_reaction
-);
+router.post("/posts/:postId/save", postController.save_post);
+
+router.post("/posts/:postId/unsave", postController.unsave_post);
 
 // User Routes
 
@@ -49,6 +49,8 @@ router.delete(
 );
 
 router.get("/user/:userId", userController.get_user);
+
+router.get("/users", userController.get_users);
 
 router.put("/user/:userId", userController.update_user);
 

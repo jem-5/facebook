@@ -5,6 +5,16 @@ const bcryptjs = require("bcryptjs");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 
+exports.get_users = async (req, res, next) => {
+  try {
+    const users = await User.find();
+    if (!users) return res.json({ message: "No users found." });
+    res.status(200).json({ users });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 exports.sign_up = [
   body("username")
     .trim()
@@ -48,7 +58,7 @@ exports.sign_up = [
           if (err) {
             return next(err);
           } else {
-            res.json({
+            return res.status(200).json({
               message: "Success",
               newUser,
             });
@@ -193,6 +203,9 @@ exports.update_user = [
 exports.get_user = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(400).json({ message: "No user found." });
+    }
     console.log(user);
     res.json({ message: user });
   } catch (err) {

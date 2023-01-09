@@ -118,3 +118,31 @@ exports.create_post_reaction = async (req, res, next) => {
     return next(err);
   }
 };
+
+exports.save_post = async (req, res, next) => {
+  try {
+    const post = req.params.postId;
+    const user = req.body.userId;
+    const savedPost = await User.findByIdAndUpdate(user, {
+      $push: { savedPosts: post },
+    });
+    if (!savedPost) return res.json({ message: "Error saving post." });
+    res.json({ message: "Post successfully saved." });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+exports.unsave_post = async (req, res, next) => {
+  try {
+    const post = req.params.postId;
+    const user = req.body.userId;
+    const unsavedPost = await User.findByIdAndUpdate(user, {
+      $pull: { savedPosts: post },
+    });
+    if (!unsavedPost) return res.json({ message: "Error unsaving post." });
+    res.json({ message: "Post successfully unsaved." });
+  } catch (err) {
+    return next(err);
+  }
+};
