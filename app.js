@@ -10,7 +10,6 @@ const path = require("path");
 const bcryptjs = require("bcryptjs");
 const passport = require("passport");
 
-const LocalStrategy = require("passport-local").Strategy;
 const JWTstrategy = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
 
@@ -18,7 +17,6 @@ require("dotenv").config();
 
 // Import models
 const User = require("./models/user");
-const Post = require("./models/post");
 
 // Connect to database
 const mongoose = require("mongoose");
@@ -32,6 +30,7 @@ db.on("error", console.error.bind(console, "mongo connection error"));
 // Import routes
 const indexRouter = require("./routes/index");
 const apiRouter = require("./routes/api");
+const auth = require("./auth");
 
 // Initialize express instance
 const app = express();
@@ -46,28 +45,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 app.use(cors());
-
-// Set up user authentication
-passport.use(
-  "local",
-  new LocalStrategy((username, password, done) => {
-    User.findOne({ username: username }, (err, user) => {
-      if (err) {
-        return done(err);
-      }
-      if (!user) {
-        return done(null, false, { message: "Incorrect username" });
-      }
-      bcryptjs.compare(password, user.password, (err, res) => {
-        if (res) {
-          return done(null, user);
-        } else {
-          return done(null, false, { message: "Incorrect password" });
-        }
-      });
-    });
-  })
-);
 
 passport.use(
   new JWTstrategy(
@@ -118,5 +95,8 @@ app.use(function (err, req, res, next) {
 // Handle routes
 app.use("/", indexRouter);
 app.use("/api", apiRouter);
+app.use("/auth/signup", auth.sign_up);
+app.use("/auth/login", auth.log_in);
+app.use("/auth/logout", auth.log_out);
 
 module.exports = app;

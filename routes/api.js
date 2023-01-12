@@ -3,7 +3,7 @@ const router = express.Router();
 const postController = require("../controllers/postController");
 const userController = require("../controllers/userController");
 const commentController = require("../controllers/commentController");
-const verifyToken = require("../../blog/config/verifyToken");
+const verifyToken = require("../config/verifyToken");
 
 // Post Routes
 router.get("/", function (req, res, next) {
@@ -27,12 +27,6 @@ router.post("/posts/:postId/save", postController.save_post);
 router.post("/posts/:postId/unsave", postController.unsave_post);
 
 // User Routes
-
-router.post("/signup", userController.sign_up);
-
-router.post("/login", userController.log_in);
-
-router.post("/logout", userController.log_out);
 
 router.get("/user/:userId/requests", userController.get_friend_request);
 
