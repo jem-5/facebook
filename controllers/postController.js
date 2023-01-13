@@ -68,11 +68,6 @@ exports.create_post = [
 ];
 
 exports.update_post = [
-  body("user")
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage("User field must not be empty.")
-    .escape(),
   body("body")
     .trim()
     .isLength({ min: 5, max: 2000 })

@@ -101,7 +101,6 @@ exports.log_in = [
     if (!errors.isEmpty()) {
       return res.status(400).json({ error: errors.array() });
     }
-
     const user = await User.findOne({
       username: req.body.username,
     });
@@ -113,6 +112,7 @@ exports.log_in = [
     }
 
     const correct = await bcryptjs.compare(req.body.password, user.password);
+    console.log(correct);
 
     if (!correct) {
       return res

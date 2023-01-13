@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const { body, validationResult } = require("express-validator");
+const bcryptjs = require("bcryptjs");
 
 exports.get_users = async (req, res, next) => {
   try {
@@ -75,28 +76,17 @@ exports.reject_friend_request = async (req, res, next) => {
   }
 };
 
-exports.update_user = [
-  body("username")
-    .trim()
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("Username can only contain letters.")
-    .isLength({ min: 3, max: 20 })
-    .withMessage("Username must contain between 3-20 characters.")
-    .escape(),
-  body("password")
-    .trim()
-    .isAlphanumeric()
-    .withMessage("Password can only contain letters & numbers.")
-    .isLength({ min: 3, max: 20 })
-    .withMessage("Password must be between 3-20 characters.")
-    .escape(),
-  async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.json({ errors: errors.array() });
-    try {
+exports.update_user = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.json({ errors: errors.array() });
+  try {
+    bcryptjs.hash(req.body.password, 10, async (err, hashedPassword) => {
+      if (err) {
+        return next(err);
+      }
       const updatedUser = await User.findByIdAndUpdate(req.params.userId, {
         username: req.body.username,
-        password: req.body.password,
+        password: hashedPassword,
         email: req.body.email,
         name: req.body.name,
         photoPath: req.body.photoPath,
@@ -106,11 +96,11 @@ exports.update_user = [
         message: "User successfully updated.",
         updatedUser,
       });
-    } catch (err) {
-      return next(err);
-    }
-  },
-];
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
 
 exports.get_user = async (req, res, next) => {
   try {
