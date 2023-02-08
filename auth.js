@@ -50,14 +50,17 @@ exports.sign_up = [
     let errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log(errors.array());
-      res.json({ message: errors.array() });
+      return res.status(400).json({ error: errors.array() });
     }
     try {
-      const isExistingUser = User.countDocuments({
+      const isExistingUser = await User.countDocuments({
         username: req.body.username,
       });
+      console.log(isExistingUser);
       if (isExistingUser > 0) {
-        res.json({ message: "User already exists. Please log in." });
+        return res
+          .status(400)
+          .json({ error: "User already exists. Please log in." });
       }
       bcryptjs.hash(req.body.password, 10, (err, hashedPassword) => {
         if (err) {
@@ -106,18 +109,14 @@ exports.log_in = [
     });
 
     if (!user) {
-      return res
-        .status(400)
-        .json({ error: { username: { msg: "Username not found" } } });
+      return res.status(400).json({ error: "Username not found" });
     }
 
     const correct = await bcryptjs.compare(req.body.password, user.password);
     console.log(correct);
 
     if (!correct) {
-      return res
-        .status(400)
-        .json({ error: { password: { msg: "Incorrect password" } } });
+      return res.status(400).json({ error: "Incorrect password" });
     }
     try {
       jwt.sign(

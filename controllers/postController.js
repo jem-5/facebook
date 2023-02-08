@@ -4,23 +4,19 @@ const Reaction = require("../models/reaction");
 const { body, validationResult } = require("express-validator");
 const { ResultWithContext } = require("express-validator/src/chain");
 
-exports.get_posts = async (req, res, next) => {
-  try {
-    const posts = await Post.find();
-    if (!posts) return res.json({ message: "No posts found." });
-    res.json({ posts });
-  } catch (err) {
-    return next(err);
-  }
-};
-
 exports.get_feed_posts = async (req, res, next) => {
   const userId = req.body.userId;
   const thisUser = User.findById(userId);
+  console.log(req.body);
+  let posts;
   try {
-    const posts = await Post.find({
-      $or: [{ user: userId }, { user: { $in: thisUser.friends } }],
-    });
+    if (userId) {
+      posts = await Post.find({
+        $or: [{ user: userId }, { user: { $in: thisUser.friends } }],
+      });
+    } else {
+      posts = await Post.find({});
+    }
     if (!posts) return res.json({ message: "No posts found." });
     res.json({ posts });
   } catch (err) {
@@ -109,6 +105,17 @@ exports.create_post_reaction = async (req, res, next) => {
       if (err) return next(err);
       res.json({ message: "Reaction created successfully." });
     });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+exports.get_post_reactions = async (req, res, next) => {
+  try {
+    const reactions = await Reaction.find({ post: req.params.postId });
+    if (!reactions)
+      return res.status(400).json({ message: "No post reactions found." });
+    res.json({ reactions });
   } catch (err) {
     return next(err);
   }

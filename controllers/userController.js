@@ -76,26 +76,26 @@ exports.reject_friend_request = async (req, res, next) => {
   }
 };
 
-exports.update_user = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.json({ errors: errors.array() });
+exports.update_user = async (req, res, next) => {
+  const updatedUser = await User.findByIdAndUpdate(req.params.userId, {
+    username: req.body.username,
+    // password: hashedPassword,
+    email: req.body.email,
+    name: req.body.name,
+    photoPath: req.body.photoPath,
+  });
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) return res.json({ errors: errors.array() });
   try {
-    bcryptjs.hash(req.body.password, 10, async (err, hashedPassword) => {
-      if (err) {
-        return next(err);
-      }
-      const updatedUser = await User.findByIdAndUpdate(req.params.userId, {
-        username: req.body.username,
-        password: hashedPassword,
-        email: req.body.email,
-        name: req.body.name,
-        photoPath: req.body.photoPath,
-      });
-      if (!updatedUser) return res.json({ message: "User not found." });
-      res.json({
-        message: "User successfully updated.",
-        updatedUser,
-      });
+    // bcryptjs.hash(req.body.password, 10, async (err, hashedPassword) => {
+    //   if (err) {
+    //     return next(err);
+    //   }
+
+    if (!updatedUser) return res.json({ message: "User not found." });
+    res.json({
+      message: "User successfully updated.",
+      updatedUser,
     });
   } catch (err) {
     return next(err);

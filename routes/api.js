@@ -11,9 +11,7 @@ router.get("/", function (req, res, next) {
   res.redirect("/api/posts");
 });
 
-router.get("/posts", verifyToken, postController.get_feed_posts);
-
-router.get("/posts/all", postController.get_posts);
+router.put("/posts", postController.get_feed_posts);
 
 router.get("/posts/:postId", postController.get_single_post);
 
@@ -38,6 +36,8 @@ router.post(
   verifyToken,
   postController.create_post_reaction
 );
+
+router.get("/posts/:postId/reactions", postController.get_post_reactions);
 
 router.post("/posts/:postId/save", verifyToken, postController.save_post);
 
