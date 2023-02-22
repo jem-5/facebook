@@ -45,11 +45,7 @@ router.post("/posts/:postId/unsave", verifyToken, postController.unsave_post);
 
 // User Routes
 
-router.get(
-  "/user/:userId/requests",
-  verifyToken,
-  userController.get_friend_request
-);
+router.get("/user/:userId/requests", userController.get_friend_request);
 
 router.post(
   "/user/:userId/requests",
@@ -67,6 +63,7 @@ router.put(
 router.delete(
   "/user/:userId/requests/:friendId",
   verifyToken,
+  verifyAuthorization,
   userController.reject_friend_request
 );
 

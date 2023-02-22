@@ -4,30 +4,72 @@ import { useParams } from "react-router-dom";
 import Header from "./Header";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
+import DisplayFriends from "./DisplayFriends";
 
 const UserProfile = () => {
   const [user, setUser] = useState("");
-
+  const [username, setUsername] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [photoPath, setPhotoPath] = useState(null);
+  const [token, setToken] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [isSelf, setIsSelf] = useState(false);
   const id = useParams().userId;
 
-  console.log(user);
+  useEffect(() => {
+    if (id === localStorage.getItem("userId")) {
+      setIsSelf(true);
+    }
+  }, [id]);
+
+  console.log(id);
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  useEffect(() => {
+    setToken(localStorage.getItem("token"));
+  }, []);
 
   useEffect(() => {
     axios
       .get(`http://localhost:3000/api/user/${id}`)
-      .then((res) => setUser(res.data.user))
+      .then((res) => {
+        setUser(res.data.user);
+        setUsername(user.username);
+        setEmail(user.email);
+        setPhotoPath(user.photoPath);
+      })
       .catch((err) => console.error(err));
   }, [id]);
+
+  const handleUpdateUser = () => {
+    axios
+      .put(
+        `http://localhost:3000/api/user/${id}`,
+        {
+          username,
+          email,
+          photoPath,
+        },
+        config
+      )
+      .then((res) => {
+        setShowModal(false);
+        window.location.reload();
+      })
+      .catch((err) => console.error(err));
+  };
 
   return (
     <div>
       <Header />
-
       <Card sx={{ maxWidth: 750, margin: "auto" }}>
         <CardContent>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
@@ -36,13 +78,7 @@ const UserProfile = () => {
           <Typography variant="h5" component="div">
             Name: {user ? user.username : null}
           </Typography>
-          <TextField
-            className="edit-user"
-            label="Name"
-            size="small"
-            variant="outlined"
-            defaultValue={user.username}
-          />
+
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
             email: {user.email ? user.email : "No email added."}
           </Typography>
@@ -50,16 +86,53 @@ const UserProfile = () => {
             profile photo:{" "}
             {user.photoPath ? user.photoPath : "No profile photo added."}
           </Typography>
-          <Typography variant="body2">
-            well meaning and kindly.a
-            <br />
-            {'"a benevolent smile"'}
-          </Typography>
+
+          {user.friends || user.friendRequests ? (
+            <DisplayFriends user={user} />
+          ) : null}
+
+          {isSelf ? (
+            <Button variant="outlined" onClick={() => setShowModal(true)}>
+              Update User
+            </Button>
+          ) : null}
         </CardContent>
-        <CardActions>
-          <Button size="small">Learn More</Button>
-        </CardActions>
       </Card>
+      {showModal ? (
+        <div className="user-modal">
+          <Box className="user-edit">
+            <div className="close-button" onClick={() => setShowModal(false)}>
+              X
+            </div>
+            <Typography variant="h5">Update User</Typography>
+            <TextField
+              label="Name"
+              size="small"
+              onChange={(e) => setUsername(e.target.value)}
+              variant="outlined"
+              defaultValue={user.username}
+            />
+            <TextField
+              label="Email"
+              type="email"
+              size="small"
+              onChange={(e) => setEmail(e.target.value)}
+              variant="outlined"
+              defaultValue={user.email}
+            />
+            <TextField
+              label="Profile Picture"
+              size="small"
+              onChange={(e) => setPhotoPath(e.target.value)}
+              variant="outlined"
+              defaultValue={user.photoPath}
+            />
+            <Button variant="outlined" onClick={handleUpdateUser}>
+              Submit
+            </Button>
+          </Box>
+        </div>
+      ) : null}
     </div>
   );
 };

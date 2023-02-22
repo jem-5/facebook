@@ -6,6 +6,8 @@ import Landing from "./components/Landing";
 import Home from "./components/Home";
 import SinglePost from "./components/SinglePost";
 import UserProfile from "./components/UserProfile";
+import Users from "./components/Users";
+
 function App() {
   return (
     <div className="app">
@@ -15,6 +17,7 @@ function App() {
           <Route path="/feed" element={<Home />} />
           <Route path="/post/:postId" element={<SinglePost />} />
           <Route path="/user/:userId" element={<UserProfile />} />
+          <Route path="/users" element={<Users />} />
         </Routes>
       </BrowserRouter>
     </div>

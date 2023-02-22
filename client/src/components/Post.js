@@ -27,6 +27,7 @@ import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import { Link, useNavigate } from "react-router-dom";
 import uniqid from "uniqid";
+import EditIcon from "@mui/icons-material/Edit";
 
 const Post = ({ post }) => {
   const [user, setUser] = useState(null);
@@ -131,7 +132,7 @@ const Post = ({ post }) => {
   return (
     <div>
       {user ? (
-        <Card sx={{ maxWidth: 600, margin: "auto" }}>
+        <Card sx={{ maxWidth: 600, margin: "auto", marginBottom: "20px" }}>
           <CardHeader
             avatar={
               <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -141,9 +142,9 @@ const Post = ({ post }) => {
             action={
               <IconButton
                 aria-label="settings"
-                onClick={() => navigate(`/posts/${post._id}`)}
+                // onClick={() => navigate(`/post/${post._id}`)}
               >
-                <MoreVertIcon />
+                {user._id === post.user ? <EditIcon /> : null}
               </IconButton>
             }
             title={

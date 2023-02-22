@@ -10,6 +10,11 @@ const PostSchema = new Schema(
     comments: [{ type: Schema.ObjectId, ref: "Comment", required: false }],
     reactions: [{ type: Schema.ObjectId, ref: "Reaction", required: false }],
     shares: { type: Number, required: false },
+    visibility: {
+      type: String,
+      enum: ["private", "public", "friends"],
+      required: false,
+    },
   },
   {
     timestamps: true,

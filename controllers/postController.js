@@ -52,6 +52,7 @@ exports.create_post = [
       const newPost = new Post({
         body: req.body.body,
         user: req.body.user,
+        visibility: req.body.visibility,
       });
       newPost.save((err) => {
         if (err) return next(err);

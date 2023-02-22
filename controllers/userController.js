@@ -24,10 +24,17 @@ exports.get_friend_request = async (req, res, next) => {
 };
 
 exports.make_friend_request = async (req, res, next) => {
-  const newFriend = req.params.userId;
   const user = req.body.userId;
+  console.log(user, req.params.userId);
   try {
-    const friendConnection = await User.findByIdAndUpdate(newFriend, {
+    const newFriend = await User.findById(req.params.userId);
+    if (newFriend.friends.some((id) => id === user)) {
+      return res.json({ message: "Already friends." });
+    }
+    if (newFriend.friendRequests.some((id) => id === user)) {
+      return res.json({ message: "Friend request already pending." });
+    }
+    const friendConnection = await User.findByIdAndUpdate(req.params.userId, {
       $push: { friendRequests: user },
     });
     if (!friendConnection) {
@@ -44,8 +51,6 @@ exports.make_friend_request = async (req, res, next) => {
 exports.accept_friend_request = async (req, res, next) => {
   const user = req.params.userId;
   const friend = req.params.friendId;
-
-  console.log(user, friend);
   try {
     if (!user || !friend) {
       return res.json({ message: "No such friend request exists." });
@@ -81,7 +86,7 @@ exports.update_user = async (req, res, next) => {
     username: req.body.username,
     // password: hashedPassword,
     email: req.body.email,
-    name: req.body.name,
+    // name: req.body.name,
     photoPath: req.body.photoPath,
   });
   // const errors = validationResult(req);

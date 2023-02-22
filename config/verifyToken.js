@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
   const bearerHeader = req.headers["authorization"];
-  console.log(bearerHeader);
+  console.log(req.headers);
   if (typeof bearerHeader === undefined) {
     console.log("Not authorized");
   }
@@ -13,8 +13,11 @@ const verifyToken = (req, res, next) => {
     req.token = bearerToken;
 
     jwt.verify(req.token, process.env.SECRET, (err, authData) => {
+      console.log("ALLOWED");
+
       if (err) return res.status(403).json(err);
       req.authData = authData;
+
       next();
     });
   }

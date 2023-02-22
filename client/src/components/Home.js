@@ -3,6 +3,8 @@ import Post from "./Post";
 import axios from "axios";
 import uniqid from "uniqid";
 import Header from "./Header";
+import AddPost from "./AddPost";
+
 const Home = () => {
   const [posts, setPosts] = useState(null);
   const [token, setToken] = useState(null);
@@ -32,6 +34,7 @@ const Home = () => {
     <div>
       <Header />
 
+      <AddPost />
       {posts
         ? posts.map((item) => {
             return <Post key={uniqid()} post={item} />;
