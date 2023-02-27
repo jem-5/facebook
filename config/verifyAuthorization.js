@@ -7,8 +7,6 @@ const verifyAuthorization = async (req, res, next) => {
   const post = await Post.findById(req.params.postId);
   const comment = await Comment.findById(req.params.commentId);
 
-  console.log(post, comment, req.params.userId);
-
   const userId = req.params.userId
     ? req.params.userId
     : comment

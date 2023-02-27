@@ -42,8 +42,6 @@ const DisplayFriends = ({ user }) => {
     });
   }, []);
 
-  console.log(friendNames);
-
   return (
     <div>
       <Typography>Friend Requests:</Typography>

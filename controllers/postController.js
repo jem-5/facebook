@@ -2,20 +2,30 @@ const Post = require("../models/post");
 const User = require("../models/user");
 const Reaction = require("../models/reaction");
 const { body, validationResult } = require("express-validator");
-const { ResultWithContext } = require("express-validator/src/chain");
 
 exports.get_feed_posts = async (req, res, next) => {
   const userId = req.body.userId;
-  const thisUser = User.findById(userId);
-  console.log(req.body);
+  const thisUser = await User.findById(userId);
   let posts;
   try {
     if (userId) {
+      // const userPosts = await Post.find({ user: userId });
+      // const friendPosts = await Post.find({ user: { $in: thisUser.friends } });
+      // const publicPosts = await Post.find({ visibility: "public" });
+      // const returnedPosts = [...userPosts, ...friendPosts, ...publicPosts];
+      // const ids = returnedPosts.map((o) => o.id);
+      // posts = returnedPosts.filter(
+      //   ({ id }, index) => !ids.includes(id, index + 1)
+      // );
       posts = await Post.find({
-        $or: [{ user: userId }, { user: { $in: thisUser.friends } }],
+        $or: [
+          { user: userId },
+          { user: { $in: thisUser.friends } },
+          { visibility: "public" },
+        ],
       });
     } else {
-      posts = await Post.find({});
+      posts = await Post.find({ visibility: "public" });
     }
     if (!posts) return res.json({ message: "No posts found." });
     res.json({ posts });
@@ -98,7 +108,7 @@ exports.delete_post = async (req, res, next) => {
 exports.create_post_reaction = async (req, res, next) => {
   try {
     const newReaction = new Reaction({
-      post: req.params.postId,
+      post: req.body.postId,
       user: req.body.userId,
       type: req.body.type,
     });
@@ -122,30 +132,30 @@ exports.get_post_reactions = async (req, res, next) => {
   }
 };
 
-exports.save_post = async (req, res, next) => {
-  try {
-    const post = req.params.postId;
-    const user = req.body.userId;
-    const savedPost = await User.findByIdAndUpdate(user, {
-      $push: { savedPosts: post },
-    });
-    if (!savedPost) return res.json({ message: "Error saving post." });
-    res.json({ message: "Post successfully saved." });
-  } catch (err) {
-    return next(err);
-  }
-};
+// exports.save_post = async (req, res, next) => {
+//   try {
+//     const post = req.params.postId;
+//     const user = req.body.userId;
+//     const savedPost = await User.findByIdAndUpdate(user, {
+//       $push: { savedPosts: post },
+//     });
+//     if (!savedPost) return res.json({ message: "Error saving post." });
+//     res.json({ message: "Post successfully saved." });
+//   } catch (err) {
+//     return next(err);
+//   }
+// };
 
-exports.unsave_post = async (req, res, next) => {
-  try {
-    const post = req.params.postId;
-    const user = req.body.userId;
-    const unsavedPost = await User.findByIdAndUpdate(user, {
-      $pull: { savedPosts: post },
-    });
-    if (!unsavedPost) return res.json({ message: "Error unsaving post." });
-    res.json({ message: "Post successfully unsaved." });
-  } catch (err) {
-    return next(err);
-  }
-};
+// exports.unsave_post = async (req, res, next) => {
+//   try {
+//     const post = req.params.postId;
+//     const user = req.body.userId;
+//     const unsavedPost = await User.findByIdAndUpdate(user, {
+//       $pull: { savedPosts: post },
+//     });
+//     if (!unsavedPost) return res.json({ message: "Error unsaving post." });
+//     res.json({ message: "Post successfully unsaved." });
+//   } catch (err) {
+//     return next(err);
+//   }
+// };

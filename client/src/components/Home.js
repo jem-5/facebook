@@ -6,14 +6,9 @@ import Header from "./Header";
 import AddPost from "./AddPost";
 
 const Home = () => {
-  const [posts, setPosts] = useState(null);
-  const [token, setToken] = useState(null);
-  const [userId, setUserId] = useState(null);
-
-  useEffect(() => {
-    setToken(localStorage.getItem("token"));
-    setUserId(localStorage.getItem("userId"));
-  }, []);
+  const [posts, setPosts] = useState([]);
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     if (localStorage.getItem("userAuth") === "true") {

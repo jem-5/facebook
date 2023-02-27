@@ -18,13 +18,17 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import LanguageIcon from "@mui/icons-material/Language";
 import GroupIcon from "@mui/icons-material/Group";
+
 const AddPost = () => {
   const [user, setUser] = useState(null);
+  const [photoPath, setPhotoPath] = useState(null);
+  const [username, setUsername] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [body, setBody] = useState(null);
   const [token, setToken] = useState(null);
   const [visibilityModal, setVisibilityModal] = useState(false);
-  const [visibility, setVisibility] = useState(null);
+  const [visibility, setVisibility] = useState("friends");
+  const id = localStorage.getItem("userId");
 
   useEffect(() => {
     setToken(localStorage.getItem("token"));
@@ -37,14 +41,18 @@ const AddPost = () => {
   };
 
   useEffect(() => {
-    const id = localStorage.getItem("userId");
     axios
       .get(`http://localhost:3000/api/user/${id}`)
-      .then((res) => setUser(res.data.user))
-      .catch((err) => console.error(err));
-  }, []);
+      .then((res) => {
+        console.log(res.data);
+        setPhotoPath(res.data.user.photoPath);
+        setUsername(res.data.user.username);
 
-  console.log(user);
+        setUser(res.data.user);
+      })
+      .catch((err) => console.error(err));
+  }, [id]);
+
   const handlePostSubmit = () => {
     axios
       .post(
@@ -64,7 +72,7 @@ const AddPost = () => {
       .catch((err) => console.error(err));
   };
 
-  console.log(visibility);
+  console.log();
 
   return (
     <div>
@@ -80,12 +88,13 @@ const AddPost = () => {
           padding: "15px",
         }}
       >
-        <Avatar
-          sx={{ bgcolor: "#f44336", width: 30, height: 30 }}
-          aria-label="user avatar"
-        >
-          {user ? user.username[0] : null}
-        </Avatar>
+        {photoPath ? (
+          <Avatar alt="avatar" src={photoPath} />
+        ) : (
+          <Avatar sx={{ bgcolor: "#f44336", width: 30, height: 30 }}>
+            {username ? username[0] : null}
+          </Avatar>
+        )}
         <TextField
           id="outlined-basic"
           label={
@@ -127,16 +136,13 @@ const AddPost = () => {
                 alignItems: "center",
               }}
             >
-              <Avatar
-                sx={{
-                  bgcolor: "#f44336",
-                  width: 40,
-                  height: 40,
-                }}
-                aria-label="user avatar"
-              >
-                {user ? user.username[0] : null}
-              </Avatar>
+              {photoPath ? (
+                <Avatar alt="avatar" src={user.photoPath} />
+              ) : (
+                <Avatar sx={{ bgcolor: "#f44336", width: 30, height: 30 }}>
+                  {username ? username[0] : null}
+                </Avatar>
+              )}
               <Box style={{ display: "flex", flexDirection: "column" }}>
                 <Typography variant="body">
                   {user ? user.username : null}
@@ -151,7 +157,7 @@ const AddPost = () => {
                   }}
                 >
                   <LockIcon style={{ width: "18px" }} />
-                  Only me <ArrowDropDownIcon />
+                  {visibility} <ArrowDropDownIcon />
                 </Typography>
               </Box>
             </Box>
@@ -199,7 +205,6 @@ const AddPost = () => {
               width: "350px",
             }}
           >
-            {" "}
             <Typography variant="body">
               Choose who can see your post.
             </Typography>
@@ -207,7 +212,7 @@ const AddPost = () => {
               <FormLabel>Visibility</FormLabel>
               <RadioGroup
                 aria-labelledby="post-visibility"
-                defaultValue="friends"
+                value={visibility}
                 name="radio-buttons-group"
                 onChange={(e) => setVisibility(e.target.value)}
                 style={{

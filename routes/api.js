@@ -39,9 +39,9 @@ router.post(
 
 router.get("/posts/:postId/reactions", postController.get_post_reactions);
 
-router.post("/posts/:postId/save", verifyToken, postController.save_post);
+// router.post("/posts/:postId/save", verifyToken, postController.save_post);
 
-router.post("/posts/:postId/unsave", verifyToken, postController.unsave_post);
+// router.post("/posts/:postId/unsave", verifyToken, postController.unsave_post);
 
 // User Routes
 

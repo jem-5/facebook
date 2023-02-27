@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -16,6 +16,8 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
+import axios from "axios";
+import Avatar from "@mui/material/Avatar";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -60,13 +62,29 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const Header = () => {
-  const navigate = useNavigate();
+  const [friendRequests, setFriendRequests] = useState([]);
+  const [photoPath, setPhotoPath] = useState(null);
 
+  const [userId, setUserId] = useState(null);
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId"));
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3000/api/user/${userId}`)
+      .then((res) => {
+        setFriendRequests(res.data.user.friendRequests);
+        setPhotoPath(res.data.user.photoPath);
+      })
+      .catch((err) => console.error(err));
+  }, [userId]);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -79,6 +97,13 @@ const Header = () => {
   const handleMenuClose = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
+    navigate("");
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    handleMenuClose();
+    window.location.reload();
   };
 
   const handleMobileMenuOpen = (event) => {
@@ -102,8 +127,17 @@ const Header = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      {userId ? (
+        <Fragment>
+          {" "}
+          <MenuItem onClick={() => navigate(`/user/${userId}`)}>
+            Profile
+          </MenuItem>
+          <MenuItem onClick={handleLogout}>Log out</MenuItem>{" "}
+        </Fragment>
+      ) : (
+        <MenuItem onClick={() => navigate(`/`)}>Log in</MenuItem>
+      )}
     </Menu>
   );
 
@@ -136,10 +170,10 @@ const Header = () => {
       <MenuItem>
         <IconButton
           size="large"
-          aria-label="show 17 new notifications"
+          aria-label="show new notifications"
           color="inherit"
         >
-          <Badge badgeContent={17} color="error">
+          <Badge badgeContent={friendRequests.length} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -196,17 +230,24 @@ const Header = () => {
 
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <Button variant="outlined" onClick={() => navigate("/users")}>
-              Find Friends
-            </Button>
+            {userId ? (
+              <Button
+                variant="outlined"
+                onClick={() => navigate("/users")}
+                size="small"
+                sx={{ height: "40px", alignSelf: "center" }}
+              >
+                Find Friends
+              </Button>
+            ) : null}
 
             <IconButton
               size="large"
-              aria-label="show 17 new notifications"
+              aria-label="show new notifications"
               color="inherit"
             >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
+              <Badge badgeContent={friendRequests.length} color="error">
+                <NotificationsIcon onClick={() => navigate("/users")} />
               </Badge>
             </IconButton>
             <IconButton
@@ -218,7 +259,24 @@ const Header = () => {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <AccountCircle />
+              {/* <AccountCircle /> */}
+              {photoPath ? (
+                <Avatar alt="avatar" src={photoPath} />
+              ) : (
+                <Avatar
+                  sx={{
+                    bgcolor: "#f44336",
+                    width: 40,
+                    height: 40,
+                  }}
+                  aria-label="user avatar"
+                >
+                  J
+                </Avatar>
+              )}
+              {/* <Avatar aria-label="avatar" sx={{ width: 24, height: 24 }}>
+                {user.username[0]}
+              </Avatar>{" "} */}
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: "flex", md: "none" } }}>

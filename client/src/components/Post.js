@@ -7,7 +7,6 @@ import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
@@ -28,6 +27,9 @@ import InputBase from "@mui/material/InputBase";
 import { Link, useNavigate } from "react-router-dom";
 import uniqid from "uniqid";
 import EditIcon from "@mui/icons-material/Edit";
+import { Button } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import DeleteIcon from "@mui/icons-material/DeleteForever";
 
 const Post = ({ post }) => {
   const [user, setUser] = useState(null);
@@ -41,7 +43,9 @@ const Post = ({ post }) => {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState(null);
   const commentInput = useRef();
-  const navigate = useNavigate();
+  const [editMode, setEditMode] = useState(false);
+  const [body, setBody] = useState(null);
+  const [deleteMode, setDeleteMode] = useState(false);
 
   const config = {
     headers: {
@@ -49,18 +53,41 @@ const Post = ({ post }) => {
     },
   };
 
+  const handlePostUpdate = () => {
+    axios
+      .put(
+        `http://localhost:3000/api/posts/${post._id}`,
+        {
+          body: body,
+          user: localStorage.getItem("userId"),
+        },
+        config
+      )
+      .then((res) => window.location.reload())
+      .catch((err) => console.error(err));
+  };
+
+  const handlePostDelete = () => {
+    axios
+      .delete(
+        `http://localhost:3000/api/posts/${post._id}`,
+
+        config
+      )
+      .then((res) => window.location.reload())
+      .catch((err) => console.error(err));
+  };
+
   useEffect(() => {
     setToken(localStorage.getItem("token"));
   }, []);
 
   useEffect(() => {
-    if (post.user) {
-      axios
-        .get(`http://localhost:3000/api/user/${post.user}`)
-        .then((res) => setUser(res.data.user))
-        .catch((err) => console.error(err));
-    }
-  }, [post]);
+    axios
+      .get(`http://localhost:3000/api/user/${post.user}`)
+      .then((res) => setUser(res.data.user))
+      .catch((err) => console.error(err));
+  }, []);
 
   const handleCommentSubmit = () => {
     axios
@@ -76,6 +103,7 @@ const Post = ({ post }) => {
       .then((res) => {
         console.log(res.data);
         setComment("");
+        window.location.reload();
       })
       .catch((err) => console.error(err));
   };
@@ -94,18 +122,19 @@ const Post = ({ post }) => {
       .catch((err) => console.error(err));
   }, [post]);
 
-  const handleNewReaction = () => {
+  const handleNewReaction = (reactString) => {
+    console.log(reactString);
     axios
       .post(
         `http://localhost:3000/api/posts/${post._id}/reactions`,
         {
           postId: post._id,
           userId: localStorage.getItem("userId"),
-          type: reaction,
+          type: reactString,
         },
         config
       )
-      .then((res) => console.log(res.data))
+      .then((res) => window.location.reload())
       .catch((err) => console.error(err));
   };
 
@@ -129,23 +158,54 @@ const Post = ({ post }) => {
     window.addEventListener("click", click);
   }, []);
 
+  const getTime = (time) => {
+    const timePassed = new Date() - new Date(time);
+    const days = Math.floor(timePassed / 86400000);
+    if (days >= 1) {
+      return days + "d";
+    } else {
+      const hours = Math.floor(timePassed / 3600000);
+      if (hours >= 1) return hours + "h";
+      const minutes = Math.floor(timePassed / 60000);
+      if (minutes > 1) return minutes + "m";
+    }
+    return "1m";
+  };
+
   return (
     <div>
       {user ? (
         <Card sx={{ maxWidth: 600, margin: "auto", marginBottom: "20px" }}>
           <CardHeader
             avatar={
-              <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                {user.username[0]}
-              </Avatar>
+              user.photoPath ? (
+                <Avatar alt="avatar" src={user.photoPath} />
+              ) : (
+                <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                  {user.username[0]}
+                </Avatar>
+              )
             }
             action={
-              <IconButton
-                aria-label="settings"
-                // onClick={() => navigate(`/post/${post._id}`)}
-              >
-                {user._id === post.user ? <EditIcon /> : null}
-              </IconButton>
+              <div>
+                <IconButton
+                  onClick={() => setEditMode(true)}
+                  aria-label="settings"
+                >
+                  {user._id === localStorage.getItem("userId") ? (
+                    <EditIcon />
+                  ) : null}
+                </IconButton>
+                <IconButton
+                  onClick={() => setDeleteMode(true)}
+                  aria-label="settings"
+                  style={{ position: "relative" }}
+                >
+                  {user._id === localStorage.getItem("userId") ? (
+                    <DeleteIcon />
+                  ) : null}
+                </IconButton>
+              </div>
             }
             title={
               <Link
@@ -160,8 +220,7 @@ const Post = ({ post }) => {
                 to={`/post/${post._id}`}
                 style={{ textDecoration: "none", color: "black" }}
               >
-                {Math.floor((new Date() - new Date(post.createdAt)) / 86400000)}
-                d
+                {getTime(post.createdAt)}
               </Link>
             }
           />
@@ -176,7 +235,24 @@ const Post = ({ post }) => {
           ) : (
             ""
           )}
-
+          {deleteMode ? (
+            <div style={{ position: "relative" }}>
+              <div className="delete-confirmation">
+                <Typography variant="h6">
+                  Are you sure you'd like to delete this post?
+                </Typography>
+                <Button variant="contained" onClick={handlePostDelete}>
+                  Yes
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => setDeleteMode(false)}
+                >
+                  No
+                </Button>
+              </div>
+            </div>
+          ) : null}
           <CardContent>
             <Typography paragraph>{post.body}</Typography>
           </CardContent>
@@ -207,34 +283,34 @@ const Post = ({ post }) => {
               <Typography ref={reactionsRef}>Like</Typography>
             </IconButton>
             {showReactions ? (
-              <Box className="create-reaction" onClick={handleNewReaction()}>
+              <Box className="create-reaction">
                 <img
                   className="reaction-emoji"
-                  onClick={() => setReaction("like")}
+                  onClick={() => handleNewReaction("like")}
                   src={LikeIcon}
                   alt="like"
                 />
                 <img
                   className="reaction-emoji"
-                  onClick={() => setReaction("love")}
+                  onClick={() => handleNewReaction("love")}
                   src={HeartIcon}
                   alt="love"
                 />
                 <img
                   className="reaction-emoji"
-                  onClick={() => setReaction("clap")}
+                  onClick={() => handleNewReaction("clap")}
                   src={ClapIcon}
                   alt="clap"
                 />
                 <img
                   className="reaction-emoji"
-                  onClick={() => setReaction("cry")}
+                  onClick={() => handleNewReaction("cry")}
                   src={CryIcon}
                   alt="cry"
                 />
                 <img
                   className="reaction-emoji"
-                  onClick={() => setReaction("angry")}
+                  onClick={() => handleNewReaction("angry")}
                   src={AngryIcon}
                   alt="angry"
                 />
@@ -264,7 +340,7 @@ const Post = ({ post }) => {
                 id="comment"
                 label="Write a comment..."
                 variant="filled"
-                fullWidth
+                fullwidth="true"
                 sx={{
                   p: "2px 4px",
                   display: "flex",
@@ -273,15 +349,20 @@ const Post = ({ post }) => {
                 }}
               >
                 <IconButton sx={{ p: "10px" }} aria-label="menu">
-                  <Avatar
-                    aria-label="avatar"
-                    sx={{ width: 24, height: 24, bgcolor: red[500] }}
-                  >
-                    {user.username[0]}
-                  </Avatar>{" "}
+                  {user.photoPath ? (
+                    <Avatar
+                      sx={{ width: 24, height: 24 }}
+                      alt="avatar"
+                      src={user.photoPath}
+                    />
+                  ) : (
+                    <Avatar sx={{ bgcolor: "#f44336", width: 24, height: 24 }}>
+                      {user.username[0]}
+                    </Avatar>
+                  )}
                 </IconButton>
                 <InputBase
-                  value={comment}
+                  defaultValue={comment}
                   ref={commentInput}
                   onChange={(e) => setComment(e.target.value)}
                   sx={{ ml: 1, flex: 1 }}
@@ -308,6 +389,54 @@ const Post = ({ post }) => {
       ) : (
         " "
       )}
+      {editMode ? (
+        <div className="edit-post-modal" onClick={() => setEditMode(false)}>
+          <div className="edit-post" onClick={(e) => e.stopPropagation()}>
+            <Typography variant="h5">Edit post</Typography>
+
+            <div className="close-button" onClick={() => setEditMode(false)}>
+              X
+            </div>
+            <Divider style={{ backgroundColor: "gray", width: "100%" }} />
+            <Box
+              style={{
+                display: "flex",
+                justifyContent: "flex-start",
+                alignSelf: "flex-start",
+              }}
+            >
+              {user.photoPath ? (
+                <Avatar alt="avatar" src={user.photoPath} />
+              ) : (
+                <Avatar
+                  sx={{
+                    bgcolor: "#f44336",
+                    width: 40,
+                    height: 40,
+                  }}
+                  aria-label="user avatar"
+                >
+                  {user ? user.username[0] : null}
+                </Avatar>
+              )}
+              <Typography variant="body">
+                {user ? user.username : null}
+              </Typography>
+            </Box>
+            <TextField
+              multiline
+              fullWidth
+              style={{ border: "0px" }}
+              rows={5}
+              defaultValue={post.body}
+              onChange={(e) => setBody(e.target.value)}
+            />
+            <Button variant="contained" onClick={handlePostUpdate}>
+              Update
+            </Button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };

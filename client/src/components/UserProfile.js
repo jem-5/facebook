@@ -66,7 +66,7 @@ const UserProfile = () => {
       })
       .catch((err) => console.error(err));
   };
-
+  console.log(user.photoPath);
   return (
     <div>
       <Header />
@@ -84,7 +84,15 @@ const UserProfile = () => {
           </Typography>
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
             profile photo:{" "}
-            {user.photoPath ? user.photoPath : "No profile photo added."}
+            {user.photoPath ? (
+              <img
+                src={user.photoPath}
+                alt="profile"
+                style={{ width: "150px" }}
+              />
+            ) : (
+              "No profile photo added."
+            )}
           </Typography>
 
           {user.friends || user.friendRequests ? (
