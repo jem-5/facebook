@@ -244,3 +244,13 @@ transform: scale(1.4);
   border: 1px solid black;
   margin: auto;
 }
+
+.edit-delete-comment {
+  display: flex;
+  justify-self: flex-end; 
+}
+
+.comment {
+  display: flex;
+  justify-content: space-between;
+}

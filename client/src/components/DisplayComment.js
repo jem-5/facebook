@@ -135,18 +135,19 @@ const DisplayComment = ({ comment }) => {
                   </div>
                 ) : null}
                 {comment.message}
-                {comment.user === localStorage.getItem("userId") ? (
-                  <div>
-                    <EditIcon onClick={() => setEditMode(true)} />
-                    <DeleteIcon onClick={() => setDeleteMode(true)} />
-                  </div>
-                ) : null}
               </Fragment>
             }
             secondary={getTime(comment.createdAt)}
           />
+          {comment.user === localStorage.getItem("userId") ? (
+            <div className="edit-delete-comment">
+              <EditIcon onClick={() => setEditMode(true)} />
+              <DeleteIcon onClick={() => setDeleteMode(true)} />
+            </div>
+          ) : null}
         </Typography>
       </ListItem>
+
       {editMode ? (
         <div className="edit-comment-modal" onClick={() => setEditMode(false)}>
           <div className="edit-comment" onClick={(e) => e.stopPropagation()}>

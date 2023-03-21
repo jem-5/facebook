@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -77,13 +77,15 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:3000/api/user/${userId}`)
-      .then((res) => {
-        setFriendRequests(res.data.user.friendRequests);
-        setPhotoPath(res.data.user.photoPath);
-      })
-      .catch((err) => console.error(err));
+    if (userId) {
+      axios
+        .get(`http://localhost:3000/api/user/${userId}`)
+        .then((res) => {
+          setFriendRequests(res.data.user.friendRequests);
+          setPhotoPath(res.data.user.photoPath);
+        })
+        .catch((err) => console.error(err));
+    }
   }, [userId]);
 
   const handleProfileMenuOpen = (event) => {
@@ -128,13 +130,13 @@ const Header = () => {
       onClose={handleMenuClose}
     >
       {userId ? (
-        <Fragment>
+        <div>
           {" "}
           <MenuItem onClick={() => navigate(`/user/${userId}`)}>
             Profile
           </MenuItem>
           <MenuItem onClick={handleLogout}>Log out</MenuItem>{" "}
-        </Fragment>
+        </div>
       ) : (
         <MenuItem onClick={() => navigate(`/`)}>Log in</MenuItem>
       )}

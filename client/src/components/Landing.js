@@ -55,7 +55,6 @@ const Landing = () => {
         console.log(err.response.data.error);
       });
   };
-  console.log(username, password, password2);
 
   return (
     <div className="landing">
@@ -75,7 +74,6 @@ const Landing = () => {
           autoComplete="off"
         >
           <TextField
-            id="outlined-basic"
             label="Username"
             variant="outlined"
             fullWidth
@@ -83,7 +81,6 @@ const Landing = () => {
             onChange={(e) => setUsername(e.target.value)}
           />
           <TextField
-            id="outlined-basic"
             label="Password"
             variant="outlined"
             type="password"

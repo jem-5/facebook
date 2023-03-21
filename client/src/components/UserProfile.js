@@ -26,7 +26,6 @@ const UserProfile = () => {
     }
   }, [id]);
 
-  console.log(id);
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -47,7 +46,7 @@ const UserProfile = () => {
         setPhotoPath(user.photoPath);
       })
       .catch((err) => console.error(err));
-  }, [id]);
+  }, [id, user.email, user.photoPath, user.username]);
 
   const handleUpdateUser = () => {
     axios
@@ -66,7 +65,6 @@ const UserProfile = () => {
       })
       .catch((err) => console.error(err));
   };
-  console.log(user.photoPath);
   return (
     <div>
       <Header />

@@ -40,7 +40,7 @@ const DisplayFriends = ({ user }) => {
         })
         .catch((err) => console.error(err));
     });
-  }, []);
+  }, [friendNames, friendRequestNames, user.friendRequests]);
 
   return (
     <div>

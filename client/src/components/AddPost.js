@@ -1,8 +1,5 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
 import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Divider from "@mui/material/Divider";
@@ -44,7 +41,6 @@ const AddPost = () => {
     axios
       .get(`http://localhost:3000/api/user/${id}`)
       .then((res) => {
-        console.log(res.data);
         setPhotoPath(res.data.user.photoPath);
         setUsername(res.data.user.username);
 
@@ -229,10 +225,10 @@ const AddPost = () => {
                   control={<Radio />}
                   // onClick={setVisibility("public")}
                   label={
-                    <Fragment>
+                    <div>
                       <LanguageIcon style={{ verticalAlign: "middle" }} />
                       Public: Anyone on or off Codebook
-                    </Fragment>
+                    </div>
                   }
                 />
                 <FormControlLabel
@@ -240,10 +236,10 @@ const AddPost = () => {
                   control={<Radio />}
                   // onClick={setVisibility("friends")}
                   label={
-                    <Fragment>
+                    <div>
                       <GroupIcon style={{ verticalAlign: "middle" }} />
                       Friends: Your Friends on Codebook
-                    </Fragment>
+                    </div>
                   }
                 />
                 <FormControlLabel
@@ -251,10 +247,10 @@ const AddPost = () => {
                   control={<Radio />}
                   // onClick={setVisibility("private")}
                   label={
-                    <Fragment>
+                    <div>
                       <LockIcon style={{ verticalAlign: "middle" }} />
                       Only Me: Private Post
-                    </Fragment>
+                    </div>
                   }
                 />
               </RadioGroup>

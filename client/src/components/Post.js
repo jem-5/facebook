@@ -24,7 +24,7 @@ import DisplayComment from "./DisplayComment";
 import SubdirectoryArrowLeftIcon from "@mui/icons-material/SubdirectoryArrowLeft";
 import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import uniqid from "uniqid";
 import EditIcon from "@mui/icons-material/Edit";
 import { Button } from "@mui/material";
@@ -35,7 +35,6 @@ const Post = ({ post }) => {
   const [user, setUser] = useState(null);
   const [reactions, setReactions] = useState(null);
   const [showReactions, setShowReactions] = useState(false);
-  const [reaction, setReaction] = useState(null);
   const [token, setToken] = useState(null);
   const [shareMessage, setShareMessage] = useState(false);
   const reactionsRef = useRef();
@@ -46,12 +45,21 @@ const Post = ({ post }) => {
   const [editMode, setEditMode] = useState(false);
   const [body, setBody] = useState(null);
   const [deleteMode, setDeleteMode] = useState(false);
+  const [self, setSelf] = useState("");
 
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    axios
+      .get(`http://localhost:3000/api/user/${userId}`)
+      .then((res) => setSelf(res.data.user))
+      .catch((err) => console.error(err));
+  }, []);
 
   const handlePostUpdate = () => {
     axios
@@ -87,7 +95,7 @@ const Post = ({ post }) => {
       .get(`http://localhost:3000/api/user/${post.user}`)
       .then((res) => setUser(res.data.user))
       .catch((err) => console.error(err));
-  }, []);
+  }, [post.user]);
 
   const handleCommentSubmit = () => {
     axios
@@ -188,22 +196,14 @@ const Post = ({ post }) => {
             }
             action={
               <div>
-                <IconButton
-                  onClick={() => setEditMode(true)}
-                  aria-label="settings"
-                >
-                  {user._id === localStorage.getItem("userId") ? (
-                    <EditIcon />
-                  ) : null}
+                <IconButton onClick={() => setEditMode(true)}>
+                  {user._id === self._id ? <EditIcon /> : null}
                 </IconButton>
                 <IconButton
                   onClick={() => setDeleteMode(true)}
-                  aria-label="settings"
                   style={{ position: "relative" }}
                 >
-                  {user._id === localStorage.getItem("userId") ? (
-                    <DeleteIcon />
-                  ) : null}
+                  {user._id === self._id ? <DeleteIcon /> : null}
                 </IconButton>
               </div>
             }
@@ -349,15 +349,15 @@ const Post = ({ post }) => {
                 }}
               >
                 <IconButton sx={{ p: "10px" }} aria-label="menu">
-                  {user.photoPath ? (
+                  {self.photoPath ? (
                     <Avatar
                       sx={{ width: 24, height: 24 }}
                       alt="avatar"
-                      src={user.photoPath}
+                      src={self.photoPath}
                     />
                   ) : (
                     <Avatar sx={{ bgcolor: "#f44336", width: 24, height: 24 }}>
-                      {user.username[0]}
+                      {self.username[0]}
                     </Avatar>
                   )}
                 </IconButton>
