@@ -11,7 +11,7 @@ const Home = () => {
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    if (localStorage.getItem("userAuth") === true) {
+    if (localStorage.getItem("userAuth") === "true") {
       axios
         .put("/api/posts", { userId })
         .then((res) => setPosts(res.data.posts))
