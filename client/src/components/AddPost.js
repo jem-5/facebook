@@ -38,15 +38,17 @@ const AddPost = () => {
   };
 
   useEffect(() => {
-    axios
-      .get(`/api/user/${id}`)
-      .then((res) => {
-        setPhotoPath(res.data.user.photoPath);
-        setUsername(res.data.user.username);
+    if (id) {
+      axios
+        .get(`/api/user/${id}`)
+        .then((res) => {
+          setPhotoPath(res.data.user.photoPath);
+          setUsername(res.data.user.username);
 
-        setUser(res.data.user);
-      })
-      .catch((err) => console.error(err));
+          setUser(res.data.user);
+        })
+        .catch((err) => console.error(err));
+    }
   }, [id]);
 
   const handlePostSubmit = () => {

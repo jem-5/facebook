@@ -41,14 +41,16 @@ const DisplayComment = ({ comment }) => {
   };
 
   useEffect(() => {
-    axios
-      .get(`/api/user/${comment.user}`)
-      .then((res) => {
-        setUsername(res.data.user.username);
+    if (comment.user) {
+      axios
+        .get(`/api/user/${comment.user}`)
+        .then((res) => {
+          setUsername(res.data.user.username);
 
-        setPhotoPath(res.data.user.photoPath);
-      })
-      .catch((err) => console.error(err));
+          setPhotoPath(res.data.user.photoPath);
+        })
+        .catch((err) => console.error(err));
+    }
   });
 
   const handleCommentUpdate = () => {

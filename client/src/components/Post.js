@@ -55,10 +55,14 @@ const Post = ({ post }) => {
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    axios
-      .get(`/api/user/${userId}`)
-      .then((res) => setSelf(res.data.user))
-      .catch((err) => console.error(err));
+    if (userId) {
+      console.log(userId);
+
+      axios
+        .get(`/api/user/${userId}`)
+        .then((res) => setSelf(res.data.user))
+        .catch((err) => console.error(err));
+    }
   }, []);
 
   const handlePostUpdate = () => {

@@ -66,11 +66,11 @@ const Header = () => {
   const [photoPath, setPhotoPath] = useState(null);
 
   const [userId, setUserId] = useState(null);
-  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setUserId(localStorage.getItem("userId"));
@@ -78,6 +78,7 @@ const Header = () => {
 
   useEffect(() => {
     if (userId) {
+      console.log(userId);
       axios
         .get(`/api/user/${userId}`)
         .then((res) => {
@@ -105,7 +106,8 @@ const Header = () => {
   const handleLogout = () => {
     localStorage.clear();
     handleMenuClose();
-    window.location.reload();
+
+    navigate("/");
   };
 
   const handleMobileMenuOpen = (event) => {
@@ -216,7 +218,7 @@ const Header = () => {
             component="div"
             sx={{ color: "blue", display: { xs: "none", sm: "block" } }}
           >
-            <Link to="/feed" style={{ textDecoration: "none" }}>
+            <Link to="/" style={{ textDecoration: "none" }}>
               codebook
             </Link>
           </Typography>
