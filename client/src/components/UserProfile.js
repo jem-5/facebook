@@ -38,7 +38,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/user/${id}`)
+      .get(`/api/user/${id}`)
       .then((res) => {
         setUser(res.data.user);
         setUsername(user.username);
@@ -51,7 +51,7 @@ const UserProfile = () => {
   const handleUpdateUser = () => {
     axios
       .put(
-        `http://localhost:3000/api/user/${id}`,
+        `/api/user/${id}`,
         {
           username,
           email,

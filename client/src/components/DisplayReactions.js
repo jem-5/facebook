@@ -24,7 +24,7 @@ const DisplayReactions = ({ reactions }) => {
   useEffect(() => {
     reactions.forEach((element) => {
       axios
-        .get(`http://localhost:3000/api/user/${element.user}`)
+        .get(`/api/user/${element.user}`)
         .then((res) => {
           const user = res.data.user.username;
           setUsers((prevState) => new Set([...prevState, user]));

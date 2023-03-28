@@ -56,7 +56,7 @@ const Post = ({ post }) => {
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     axios
-      .get(`http://localhost:3000/api/user/${userId}`)
+      .get(`/api/user/${userId}`)
       .then((res) => setSelf(res.data.user))
       .catch((err) => console.error(err));
   }, []);
@@ -64,7 +64,7 @@ const Post = ({ post }) => {
   const handlePostUpdate = () => {
     axios
       .put(
-        `http://localhost:3000/api/posts/${post._id}`,
+        `/api/posts/${post._id}`,
         {
           body: body,
           user: localStorage.getItem("userId"),
@@ -78,7 +78,7 @@ const Post = ({ post }) => {
   const handlePostDelete = () => {
     axios
       .delete(
-        `http://localhost:3000/api/posts/${post._id}`,
+        `/api/posts/${post._id}`,
 
         config
       )
@@ -92,7 +92,7 @@ const Post = ({ post }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/user/${post.user}`)
+      .get(`/api/user/${post.user}`)
       .then((res) => setUser(res.data.user))
       .catch((err) => console.error(err));
   }, [post.user]);
@@ -100,7 +100,7 @@ const Post = ({ post }) => {
   const handleCommentSubmit = () => {
     axios
       .post(
-        `http://localhost:3000/api/posts/${post._id}/comments`,
+        `/api/posts/${post._id}/comments`,
         {
           post: post._id,
           user: localStorage.getItem("userId"),
@@ -118,14 +118,14 @@ const Post = ({ post }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/posts/${post._id}/reactions`)
+      .get(`/api/posts/${post._id}/reactions`)
       .then((res) => setReactions(res.data.reactions))
       .catch((err) => console.error(err));
   }, [post]);
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/posts/${post._id}/comments`)
+      .get(`/api/posts/${post._id}/comments`)
       .then((res) => setComments(res.data.comments))
       .catch((err) => console.error(err));
   }, [post]);
@@ -134,7 +134,7 @@ const Post = ({ post }) => {
     console.log(reactString);
     axios
       .post(
-        `http://localhost:3000/api/posts/${post._id}/reactions`,
+        `/api/posts/${post._id}/reactions`,
         {
           postId: post._id,
           userId: localStorage.getItem("userId"),

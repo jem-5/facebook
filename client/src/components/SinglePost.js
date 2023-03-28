@@ -9,7 +9,7 @@ const SinglePost = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/posts/${id}`)
+      .get(`/api/posts/${id}`)
       .then((res) => setPost(res.data.post))
       .catch((err) => console.error(err));
   }, [id]);

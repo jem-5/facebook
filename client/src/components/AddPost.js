@@ -39,7 +39,7 @@ const AddPost = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/user/${id}`)
+      .get(`/api/user/${id}`)
       .then((res) => {
         setPhotoPath(res.data.user.photoPath);
         setUsername(res.data.user.username);
@@ -52,7 +52,7 @@ const AddPost = () => {
   const handlePostSubmit = () => {
     axios
       .post(
-        `http://localhost:3000/api/posts`,
+        `/api/posts`,
         {
           user: user._id,
           body: body,

@@ -79,7 +79,7 @@ const Header = () => {
   useEffect(() => {
     if (userId) {
       axios
-        .get(`http://localhost:3000/api/user/${userId}`)
+        .get(`/api/user/${userId}`)
         .then((res) => {
           setFriendRequests(res.data.user.friendRequests);
           setPhotoPath(res.data.user.photoPath);

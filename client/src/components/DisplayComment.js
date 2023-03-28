@@ -35,17 +35,14 @@ const DisplayComment = ({ comment }) => {
 
   const handleCommentDelete = () => {
     axios
-      .delete(
-        `http://localhost:3000/api/posts/${comment.post}/comments/${comment._id}`,
-        config
-      )
+      .delete(`/api/posts/${comment.post}/comments/${comment._id}`, config)
       .then((res) => window.location.reload())
       .catch((err) => console.error(err));
   };
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/user/${comment.user}`)
+      .get(`/api/user/${comment.user}`)
       .then((res) => {
         setUsername(res.data.user.username);
 
@@ -57,7 +54,7 @@ const DisplayComment = ({ comment }) => {
   const handleCommentUpdate = () => {
     axios
       .put(
-        `http://localhost:3000/api/posts/${comment.post}/comments/${comment._id}`,
+        `/api/posts/${comment.post}/comments/${comment._id}`,
         {
           message: message,
           user: localStorage.getItem("userId"),

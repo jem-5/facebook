@@ -14,7 +14,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route exact path="/" element={<Landing />} />
-          <Route path="/feed" element={<Home />} />
+          <Route exact path="/feed" element={<Home />} />
           <Route path="/post/:postId" element={<SinglePost />} />
           <Route path="/user/:userId" element={<UserProfile />} />
           <Route path="/users" element={<Users />} />

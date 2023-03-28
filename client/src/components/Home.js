@@ -13,13 +13,13 @@ const Home = () => {
   useEffect(() => {
     if (localStorage.getItem("userAuth") === "true") {
       axios
-        .put("http://localhost:3000/api/posts", { userId })
+        .put("/api/posts", { userId })
         .then((res) => setPosts(res.data.posts))
         .catch((err) => console.error(err));
     } else {
       console.log("noauth");
       axios
-        .put("http://localhost:3000/api/posts")
+        .put("/api/posts")
         .then((res) => setPosts(res.data.posts))
         .catch((err) => console.error(err));
     }

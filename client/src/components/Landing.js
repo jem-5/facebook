@@ -19,7 +19,7 @@ const Landing = () => {
 
   const handleSignupSubmit = () => {
     axios
-      .post("http://localhost:3000/auth/signup", {
+      .post("/auth/signup", {
         username,
         password,
         password2,
@@ -38,7 +38,7 @@ const Landing = () => {
 
   const handleLoginSubmit = () => {
     axios
-      .post("http://localhost:3000/auth/login", {
+      .post("/auth/login", {
         username,
         password,
       })
@@ -116,6 +116,7 @@ const Landing = () => {
         <Button
           variant="contained"
           style={{ backgroundColor: "green", width: "70%" }}
+          onClick={() => navigate("/feed")}
         >
           Guest Log In
         </Button>

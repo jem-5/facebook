@@ -11,7 +11,7 @@ const DisplayFriends = ({ user }) => {
   useEffect(() => {
     user.friends.map((personId) => {
       return axios
-        .get(`http://localhost:3000/api/user/${personId}`)
+        .get(`/api/user/${personId}`)
         .then((res) => {
           if (!friendNames.some((e) => e.id === personId)) {
             const newElement = {
@@ -28,7 +28,7 @@ const DisplayFriends = ({ user }) => {
   useEffect(() => {
     user.friendRequests.map(async (personId) => {
       return axios
-        .get(`http://localhost:3000/api/user/${personId}`)
+        .get(`/api/user/${personId}`)
         .then((res) => {
           if (![...friendNames].some((e) => e.id === personId)) {
             const newElement = {

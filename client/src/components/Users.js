@@ -25,7 +25,7 @@ const Users = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/users")
+      .get("/api/users")
       .then((res) => {
         setUsers(res.data.users);
       })
@@ -50,7 +50,7 @@ const Users = () => {
   };
   const makeFriendRequest = (id) => {
     axios
-      .post(`http://localhost:3000/api/user/${id}/requests`, { userId }, config)
+      .post(`/api/user/${id}/requests`, { userId }, config)
       .then((res) => {
         console.log(res.data);
         window.location.reload();
@@ -60,11 +60,7 @@ const Users = () => {
 
   const acceptFriendRequest = (friendId) => {
     axios
-      .put(
-        `http://localhost:3000/api/user/${userId}/requests/${friendId}`,
-        { friendId },
-        config
-      )
+      .put(`/api/user/${userId}/requests/${friendId}`, { friendId }, config)
       .then((res) => {
         console.log(res.data);
         window.location.reload();
@@ -74,10 +70,7 @@ const Users = () => {
 
   const rejectFriendRequest = (friendId) => {
     axios
-      .delete(
-        `http://localhost:3000/api/user/${userId}/requests/${friendId}`,
-        config
-      )
+      .delete(`/api/user/${userId}/requests/${friendId}`, config)
       .then((res) => {
         console.log(res.data);
         window.location.reload();
