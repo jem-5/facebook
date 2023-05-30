@@ -56,6 +56,26 @@ const Landing = () => {
       });
   };
 
+  const handleGuestLoginSubmit = () => {
+    axios
+      .post("/auth/login", {
+        username: "Guest",
+        password: "guest",
+      })
+      .then((res) => {
+        console.log(res.data);
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("userAuth", true);
+        localStorage.setItem("userId", res.data.user._id);
+
+        navigate("/feed");
+      })
+      .catch((err) => {
+        setErrors(err.response.data.error);
+        console.log(err.response.data.error);
+      });
+  };
+
   return (
     <div className="landing">
       <div className="title">
@@ -116,7 +136,7 @@ const Landing = () => {
         <Button
           variant="contained"
           style={{ backgroundColor: "green", width: "70%" }}
-          onClick={() => navigate("/feed")}
+          onClick={handleGuestLoginSubmit}
         >
           Guest Log In
         </Button>
